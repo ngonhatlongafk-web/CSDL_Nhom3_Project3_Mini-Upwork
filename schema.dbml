@@ -1,0 +1,133 @@
+// ============================================================================
+// Project #3: Freelance Marketplace Ecosystem (Mini-Upwork)
+// Relational Schema (DBML) for dbdiagram.io
+// 11 Tables (No Escrow; Payments linked 1-1 with Milestones)
+// ============================================================================
+
+Project MiniUpwork {
+  database_type: 'MySQL'
+  Note: 'Freelance Marketplace Ecosystem (Mini-Upwork) - Nhóm 3'
+}
+
+Table Users {
+  UserID int [pk, increment, not null]
+  FullName varchar(255) [not null]
+  Email varchar(255) [not null, unique]
+  Password varchar(255) [not null, note: 'Hashed password']
+  Role varchar(20) [not null, note: 'Client | Freelancer | Admin']
+  AverageRating decimal(3,2) [default: 0.00, note: '0.00 to 5.00, maintained by triggers']
+}
+
+Table Clients {
+  ClientID int [pk, not null]
+  CompanyName varchar(255)
+  Location varchar(255)
+}
+
+Table Freelancers {
+  FreelancerID int [pk, not null]
+  Title varchar(255)
+}
+
+Table Skills {
+  SkillID int [pk, increment, not null]
+  SkillName varchar(255) [not null, unique]
+}
+
+Table Freelancer_Skills {
+  FreelancerID int [pk, not null]
+  SkillID int [pk, not null]
+}
+
+Table Jobs {
+  JobID int [pk, increment, not null]
+  ClientID int [not null]
+  Title varchar(255) [not null]
+  Description text [not null]
+  Budget decimal(18,2) [not null, note: 'CHECK (Budget > 0)']
+  Deadline date
+  Status varchar(50) [not null, default: 'Open', note: 'Open | In Progress | Closed | Cancelled']
+}
+
+Table Proposals {
+  ProposalID int [pk, increment, not null]
+  JobID int [not null]
+  FreelancerID int [not null]
+  BidAmount decimal(18,2) [not null, note: 'CHECK (BidAmount > 0)']
+  DeliveryTime varchar(100)
+  Status varchar(50) [not null, default: 'Pending', note: 'Pending | Accepted | Rejected | Withdrawn']
+
+  indexes {
+    (JobID, FreelancerID) [unique, name: 'uq_proposals_job_freelancer']
+  }
+}
+
+Table Contracts {
+  ContractID int [pk, increment, not null]
+  ProposalID int [not null, unique]
+  ClientID int [not null]
+  FreelancerID int [not null]
+  Amount decimal(18,2) [not null, note: 'CHECK (Amount > 0)']
+  StartDate date [not null]
+  EndDate date [null, note: 'NULL while contract is active']
+  Status varchar(50) [not null, default: 'Active', note: 'Active | Completed | Terminated']
+}
+
+Table Milestones {
+  MilestoneID int [pk, increment, not null]
+  ContractID int [not null]
+  Title varchar(255) [not null]
+  Amount decimal(18,2) [not null, note: 'CHECK (Amount > 0)']
+  DueDate date [not null]
+  Status varchar(50) [not null, default: 'Pending', note: 'Pending | Active | In Review | Approved']
+}
+
+Table Payments {
+  PaymentID int [pk, increment, not null]
+  MilestoneID int [not null, unique]
+  Amount decimal(18,2) [not null, note: 'CHECK (Amount > 0)']
+  PaymentMethod varchar(50) [not null, note: 'Bank Transfer | Credit Card | E-Wallet | PayPal']
+  PaidAt timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  Status varchar(50) [not null, default: 'Pending', note: 'Pending | Completed | Failed | Refunded']
+}
+
+Table Reviews {
+  ReviewID int [pk, increment, not null]
+  ContractID int [not null]
+  ReviewerID int [not null]
+  RevieweeID int [not null]
+  Rating int [not null, note: 'CHECK (Rating BETWEEN 1 AND 5)']
+  Comment text
+  CreatedAt timestamp [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (ContractID, ReviewerID) [unique, name: 'uq_reviews_contract_reviewer']
+  }
+}
+
+// ============================================================================
+// Relationships (Referential Integrity Rules)
+// ============================================================================
+
+Ref fk_clients_user: Clients.ClientID - Users.UserID [delete: cascade]
+Ref fk_freelancers_user: Freelancers.FreelancerID - Users.UserID [delete: cascade]
+
+Ref fk_freelancer_skills_freelancer: Freelancer_Skills.FreelancerID > Freelancers.FreelancerID [delete: cascade]
+Ref fk_freelancer_skills_skill: Freelancer_Skills.SkillID > Skills.SkillID [delete: cascade]
+
+Ref fk_jobs_client: Jobs.ClientID > Clients.ClientID [delete: cascade]
+
+Ref fk_proposals_job: Proposals.JobID > Jobs.JobID [delete: cascade]
+Ref fk_proposals_freelancer: Proposals.FreelancerID > Freelancers.FreelancerID [delete: cascade]
+
+Ref fk_contracts_proposal: Contracts.ProposalID - Proposals.ProposalID [delete: restrict]
+Ref fk_contracts_client: Contracts.ClientID > Clients.ClientID [delete: restrict]
+Ref fk_contracts_freelancer: Contracts.FreelancerID > Freelancers.FreelancerID [delete: restrict]
+
+Ref fk_milestones_contract: Milestones.ContractID > Contracts.ContractID [delete: cascade]
+
+Ref fk_payments_milestone: Payments.MilestoneID - Milestones.MilestoneID [delete: restrict]
+
+Ref fk_reviews_contract: Reviews.ContractID > Contracts.ContractID [delete: cascade]
+Ref fk_reviews_reviewer: Reviews.ReviewerID > Users.UserID [delete: restrict]
+Ref fk_reviews_reviewee: Reviews.RevieweeID > Users.UserID [delete: restrict]
