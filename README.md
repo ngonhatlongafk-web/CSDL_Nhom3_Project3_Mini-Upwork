@@ -1,47 +1,102 @@
 # ĐỒ ÁN MÔN HỌC CƠ SỞ DỮ LIỆU (INT1313)
 ## Đề tài #3: Freelance Marketplace Ecosystem (Mini-Upwork)
 
+---
+
 ### 1. Thông tin chung & Thành viên thực hiện
-* **Trường:** Học viện Công nghệ Bưu chính Viễn thông – Cơ sở tại TP. Hồ Chí Minh (PTITHCM)
-* **Môn học:** Cơ sở dữ liệu (INT1313)
-* **Lớp / Khóa học:** [D24CQCN01,02] – Khóa D24
+* **Đơn vị đào tạo:** Học viện Công nghệ Bưu chính Viễn thông – Cơ sở tại TP. Hồ Chí Minh (PTITHCM)
+* **Môn học:** Cơ sở dữ liệu (`INT1313`)
+* **Lớp / Khóa học:** D24CQCN01, D24CQCN02 – Khóa D24
 * **Giảng viên hướng dẫn:** ThS. Lê Hà Thanh (`lehathanh@ptithcm.edu.vn`)
 * **Nhóm thực hiện:** Nhóm 3
+* **Liên kết Repository:** `https://github.com/<ten-tai-khoan-cua-ban>/mini-upwork-database` *(cập nhật đúng URL repo sau khi tạo)*
 
 | STT | Họ và tên sinh viên | Mã số sinh viên | Email sinh viên | Vai trò & Phụ trách chính |
-
-| 1 | **Nguyễn Lê Khải** | `N24DCCN128` | `n24dccn128@student.ptithcm.edu.vn` | Thiết kế EER, ánh xạ lược đồ 11 bảng, chứng minh chuẩn hóa 1NF–BCNF |
-
-| 2 | **Huỳnh Duy Khánh** | `N24DCCN040` | `n24dccn040@student.ptithcm.edu.vn` | Xây dựng DDL/Triggers/Views, phát triển ứng dụng Demo Web (Flask + MySQL) |
-
-| 3 | **Ngô Nhật Long** | `N24DCCN138` | `n24dccn138@student.ptithcm.edu.vn` | Dữ liệu mẫu, truy vấn nâng cao, kiểm thử `EXPLAIN`, Negative Testing & RBAC |
+| :-: | :--- | :---: | :--- | :--- |
+| 1 | **Nguyễn Lê Khải** | `N24DCCN128` | `n24dccn128@student.ptithcm.edu.vn` | Thiết kế mô hình EER, ánh xạ lược đồ 11 bảng, chứng minh chuẩn hóa 1NF–BCNF |
+| 2 | **Huỳnh Duy Khánh** | `N24DCCN040` | `n24dccn040@student.ptithcm.edu.vn` | Xây dựng mã nguồn DDL/Triggers/Views, phát triển ứng dụng Demo Web (Flask + MySQL) |
+| 3 | **Ngô Nhật Long** | `N24DCCN138` | `n24dccn138@student.ptithcm.edu.vn` | Xây dựng dữ liệu mẫu, 5 truy vấn nâng cao, kiểm thử `EXPLAIN`, Negative Testing & RBAC |
 
 ---
 
 ### 2. Tổng quan dự án (Project Overview)
 **Mini-Upwork** là hệ thống cơ sở dữ liệu mô phỏng sàn giao dịch việc làm tự do trực tuyến, kết nối **Khách hàng (Clients)** và **Người làm tự do (Freelancers)** xuyên suốt vòng đời dự án:
-1. Đăng tin tuyển dụng (`Jobs`) & nộp hồ sơ chào giá (`Proposals`).
-2. Ký kết hợp đồng (`Contracts`) & phân chia các cột mốc tiến độ (`Milestones`).
-3. Nghiệm thu cột mốc (`Approved`) và thanh toán trực tiếp 1–1 theo từng cột mốc (`Payments`, không dùng thực thể ký quỹ trung gian `Escrow`).
-4. Đánh giá chéo hai chiều (`Reviews`) và tự động cập nhật điểm uy tín (`Users.AverageRating`) thông qua hệ thống Trigger.
+1. **Đăng tuyển & Đấu thầu:** Khách hàng đăng tin tuyển dụng (`Jobs`) và Freelancer nộp hồ sơ chào giá (`Proposals`).
+2. **Xác lập Hợp đồng & Tiến độ:** Chuyển đổi đề xuất được chấp nhận thành hợp đồng chính thức (`Contracts`) và phân chia thành các cột mốc tiến độ (`Milestones`).
+3. **Nghiệm thu & Thanh toán 1–1:** Nghiệm thu từng cột mốc (`Approved`) và ghi nhận thanh toán trực tiếp theo quan hệ 1–1 trong bảng `Payments` (không sử dụng thực thể ký quỹ trung gian `Escrow`).
+4. **Đánh giá uy tín tự động:** Thực hiện đánh giá hai chiều sau khi hoàn tất hợp đồng (`Reviews`) và tự động tính toán lại điểm trung bình (`Users.AverageRating`) thông qua hệ thống Trigger.
 
-**Thông số kỹ thuật CSDL:**
-* **Hệ quản trị CSDL:** MySQL 8.0+ (`InnoDB`, bảng mã `utf8mb4_unicode_ci`)
-* **Kiến trúc logic:** 11 bảng quan hệ đạt chuẩn **3NF / BCNF** (kèm 2 điểm phi chuẩn hóa có kiểm soát: `Contracts.ClientID/FreelancerID` và `Users.AverageRating`)
-* **Thành phần lập trình CSDL:** 8 Secondary Indexes, 3 Views, 6 Triggers, 4 RBAC Roles (`role_admin`, `role_client`, `role_freelancer`, `role_auditor`)
+#### Thông số kỹ thuật Cơ sở dữ liệu
+* **Hệ quản trị CSDL:** MySQL 8.0+ (Storage Engine: `InnoDB`, Character Set: `utf8mb4`, Collation: `utf8mb4_unicode_ci`)
+* **Kiến trúc lược đồ:** 11 bảng quan hệ đạt chuẩn **3NF / BCNF** (kèm 2 điểm phi chuẩn hóa có kiểm soát: `Contracts.ClientID/FreelancerID` để bảo toàn lịch sử pháp lý và `Users.AverageRating` để tối ưu hiệu năng đọc)
+* **Đối tượng lập trình & Tối ưu:**
+  * **8 Secondary Indexes:** Tối ưu lọc việc làm theo ngân sách/trạng thái, tiến độ cột mốc, báo cáo thanh toán và xếp hạng đánh giá.
+  * **3 Business Views:** `vw_active_jobs_summary`, `vw_contract_payment_progress`, `vw_freelancer_profiles`.
+  * **6 Triggers:** 3 Trigger tự động cập nhật `Users.AverageRating` (`INSERT`/`UPDATE`/`DELETE` trên `Reviews`) và 3 Trigger kiểm tra toàn vẹn nghiệp vụ (`BR-05`, `BR-07`, `BR-09`).
+  * **4 RBAC Roles:** `role_admin`, `role_client`, `role_freelancer`, `role_auditor` tuân thủ nguyên tắc đặc quyền tối thiểu.
 
 ---
 
-### 3. Cấu trúc thư mục Repository
+### 3. Cấu trúc thư mục, Tài liệu & Tập dữ liệu
 
 ```text
 mini-upwork-database/
-├── README.md                          # Tài liệu hướng dẫn tổng quan dự án
+├── README.md                          # Tài liệu tổng quan dự án và hướng dẫn triển khai
 ├── docs/
-│   ├── BaoCao_MiniUpwork_Nhom3.pdf    # Báo cáo chi tiết đồ án (bản PDF hoàn chỉnh)
-│   └── schema.dbml                    # Mã nguồn Lược đồ Quan hệ (dbdiagram.io)
+│   ├── BaoCao_MiniUpwork_Nhom3.pdf    # Báo cáo chi tiết thiết kế & triển khai CSDL (PDF)
+│   └── schema.dbml                    # Mã nguồn Lược đồ Quan hệ chuẩn DBML (dbdiagram.io)
 ├── database/
-│   ├── 01_ddl_script.sql              # Khởi tạo DB, 11 bảng, Indexes, Views và 6 Triggers
-│   └── 02_queries_tests_rbac.sql      # Dữ liệu mẫu, 5 truy vấn nâng cao, EXPLAIN, 10 Negative Tests & RBAC
+│   ├── 01_ddl_script.sql              # Kịch bản DDL khởi tạo CSDL, 11 bảng, Indexes, Views & Triggers
+│   └── 02_queries_tests_rbac.sql      # Tập dữ liệu mẫu (DML), 5 truy vấn nâng cao, EXPLAIN, 10 Negative Tests & RBAC
 └── app/
     └── app.py                         # Ứng dụng Web Demo (Python Flask) kết nối trực tiếp MySQL
+```
+
+---
+
+### 4. Hướng dẫn cài đặt, triển khai và vận hành
+
+#### 4.1 Yêu cầu môi trường
+* **MySQL Server 8.0+** và **MySQL Workbench** (hoặc MySQL CLI)
+* **Python 3.10+** (khuyến nghị Python 3.11+) cùng trình quản lý gói `pip`
+* Trình duyệt web hiện đại (Chrome, Edge, Firefox)
+
+#### 4.2 Triển khai Cơ sở dữ liệu (MySQL)
+1. Khởi động dịch vụ **MySQL80** và mở **MySQL Workbench**, kết nối vào máy chủ cục bộ (`localhost`, cổng `3306`).
+2. Mở tệp `database/01_ddl_script.sql` và chạy toàn bộ kịch bản (`Ctrl + Shift + Enter`) để:
+   * Khởi tạo database `mini_upwork` và 11 bảng quan hệ.
+   * Thiết lập 8 chỉ mục phụ, 3 khung nhìn (`Views`) và 6 bộ kích hoạt (`Triggers`).
+3. Mở tệp `database/02_queries_tests_rbac.sql` và thực thi lần lượt các phần:
+   * **SECTION 1 (DML):** Nạp dữ liệu mẫu cho toàn bộ 11 bảng.
+   * **SECTION 2 & 3 (Queries & Performance):** Thực thi 5 câu truy vấn phân tích nâng cao (`JOIN`, `GROUP BY/HAVING`, `CTE`, `Window Functions`) và 3 lệnh `EXPLAIN` kiểm tra chỉ mục.
+   * **SECTION 5 (RBAC):** Khởi tạo 4 vai trò (`role_admin`, `role_client`, `role_freelancer`, `role_auditor`), cấp/thu hồi quyền (`GRANT`/`REVOKE`) và tạo 4 tài khoản người dùng tương ứng.
+   * *(Tùy chọn kiểm thử)* **SECTION 4 (Negative Testing):** Bôi đen và chạy từng lệnh `TC-01` đến `TC-10` để kiểm chứng cơ chế chặn dữ liệu vi phạm ràng buộc của MySQL (`Error 3819`, `1062`, `1644`, `1451`).
+
+#### 4.3 Vận hành ứng dụng Web Demo (Python Flask)
+1. Mở tệp `app/app.py` và cập nhật mật khẩu tài khoản MySQL trong biến `DB_CONFIG`:
+   ```python
+   DB_CONFIG = {
+       "host": "localhost",
+       "user": "root",
+       "password": "YOUR_MYSQL_PASSWORD",
+       "database": "mini_upwork",
+   }
+   ```
+2. Mở Terminal / PowerShell tại thư mục gốc của dự án và cài đặt thư viện phụ thuộc:
+   ```bash
+   pip install flask mysql-connector-python
+   ```
+3. Khởi chạy máy chủ web demo:
+   ```bash
+   python app/app.py
+   ```
+4. Mở trình duyệt và truy cập địa chỉ: **`http://127.0.0.1:5000`** để trải nghiệm trực tiếp các chức năng:
+   * Xem danh sách công việc đang mở (`vw_active_jobs_summary`), đăng việc mới và nộp báo giá (`Proposals`).
+   * Theo dõi tiến độ thanh toán hợp đồng (`vw_contract_payment_progress`), nghiệm thu cột mốc (`Approve`) và thực hiện thanh toán 1–1 (`Payments`).
+   * Xem bảng xếp hạng kỹ năng và điểm đánh giá trung bình tự động (`vw_freelancer_profiles`).
+
+---
+
+### 5. Ghi chú nộp bài & Phân quyền Repository
+* Repository đã được chia sẻ quyền thành viên (Collaborator) tới giảng viên hướng dẫn: **`lehathanh@ptithcm.edu.vn`**.
+* Bản báo cáo chi tiết định dạng **PDF** được lưu tại `docs/BaoCao_MiniUpwork_Nhom3.pdf` và đồng thời được nộp riêng theo biểu mẫu quy định của môn học.
