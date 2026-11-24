@@ -11,7 +11,9 @@
 | STT | Họ và tên sinh viên | Mã số sinh viên | Email sinh viên | Vai trò & Phụ trách chính |
 
 | 1 | **Nguyễn Lê Khải** | `N24DCCN128` | `n24dccn128@student.ptithcm.edu.vn` | Thiết kế EER, ánh xạ lược đồ 11 bảng, chứng minh chuẩn hóa 1NF–BCNF |
+
 | 2 | **Huỳnh Duy Khánh** | `N24DCCN040` | `n24dccn040@student.ptithcm.edu.vn` | Xây dựng DDL/Triggers/Views, phát triển ứng dụng Demo Web (Flask + MySQL) |
+
 | 3 | **Ngô Nhật Long** | `N24DCCN138` | `n24dccn138@student.ptithcm.edu.vn` | Dữ liệu mẫu, truy vấn nâng cao, kiểm thử `EXPLAIN`, Negative Testing & RBAC |
 
 ---
