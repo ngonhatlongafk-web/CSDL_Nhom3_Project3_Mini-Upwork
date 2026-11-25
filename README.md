@@ -9,7 +9,7 @@
 * **Lớp / Khóa học:** D24CQCN01, D24CQCN02 – Khóa D24
 * **Giảng viên hướng dẫn:** ThS. Lê Hà Thanh (`lehathanh@ptithcm.edu.vn`)
 * **Nhóm thực hiện:** Nhóm 3 (Bơ vơ)
-* **Liên kết Repository:** `https://github.com/<ten-tai-khoan-cua-ban>/mini-upwork-database` *(cập nhật URL chính xác của repo sau khi khởi tạo)*
+* **Liên kết Repository:https://github.com/ngonhatlongafk-web/CSDL_Nhom3_Project3_Mini-Upwork/tree/database
 
 | STT | Họ và tên sinh viên | Mã số sinh viên | Email sinh viên | Vai trò & Phụ trách chính |
 | :-: | :--- | :---: | :--- | :--- |
