@@ -42,7 +42,6 @@
 
 ### 3. Cấu trúc thư mục, Tài liệu & Tập dữ liệu
 
-*(Lưu ý: Đảm bảo đổi tên các tệp SQL về đúng chuẩn dưới đây trước khi tải lên Repository)*
 
 ```text
 mini-upwork-database/
