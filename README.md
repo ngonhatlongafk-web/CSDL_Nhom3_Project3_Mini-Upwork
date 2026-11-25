@@ -15,7 +15,7 @@
 | :-: | :--- | :---: | :--- | :--- |
 | 1 | **Nguyễn Lê Khải** | `N24DCCN128` | `n24dccn128@student.ptithcm.edu.vn` | Thiết kế mô hình EER, ánh xạ lược đồ 11 bảng, chứng minh chuẩn hóa 1NF–BCNF |
 | 2 | **Huỳnh Duy Khánh** | `N24DCCN040` | `n24dccn040@student.ptithcm.edu.vn` | Xây dựng mã nguồn DDL/Triggers/Views, phát triển ứng dụng Demo Web (Flask + MySQL) |
-| 3 | **Ngô Nhật Long** | `N24DCCN138` | `n24dccn138@student.ptithcm.edu.vn` | Xây dựng tập dữ liệu mẫu, 5 truy vấn nâng cao, kiểm thử `EXPLAIN`, Negative Testing & RBAC |
+| 3 | **Ngô Nhật Long** | `N24DCCN138` | `ngonhatlongafk@gmail.com` | Xây dựng tập dữ liệu mẫu, 5 truy vấn nâng cao, kiểm thử `EXPLAIN`, Negative Testing & RBAC |
 
 ---
 
