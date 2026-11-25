@@ -9,7 +9,7 @@ app.secret_key = "mini_upwork_phase4_v2_secret_key"
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "acces123@123",  # <-- Điền mật khẩu MySQL của bạn tại đây
+    "password": "YOUR_MYSQL_PASSWORD",  # <-- Điền mật khẩu MySQL của bạn tại đây
     "database": "mini_upwork",
 }
 
